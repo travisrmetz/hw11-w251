@@ -27,10 +27,10 @@ class DQN:
 
         #######################
         # Change these parameters to improve performance
-        self.density_first_layer = 16
-        self.density_second_layer = 8
+        self.density_first_layer = 64
+        self.density_second_layer = 32
         self.num_epochs = 1
-        self.batch_size = 64
+        self.batch_size = 256
         self.epsilon_min = 0.01
 
         # epsilon will randomly choose the next action as either
@@ -43,13 +43,32 @@ class DQN:
         self.lr = 0.001
 
         #######################
+        
+        # #######################
+        # # Change these parameters to improve performance
+        # self.density_first_layer = 16
+        # self.density_second_layer = 8
+        # self.num_epochs = 1
+        # self.batch_size = 64
+        # self.epsilon_min = 0.01
+
+        # # epsilon will randomly choose the next action as either
+        # # a random action, or the highest scoring predicted action
+        # self.epsilon = 1.0
+        # self.epsilon_decay = 0.995
+        # self.gamma = 0.99
+
+        # # Learning rate
+        # self.lr = 0.001
+
+        # #######################
 
         self.rewards_list = []
 
         self.replay_memory_buffer = deque(maxlen=500000)
         self.num_action_space = self.action_space.n
         self.num_observation_space = env.observation_space.shape[0]
-
+        
 
         self.model = self.initialize_model()
 
@@ -74,7 +93,7 @@ class DQN:
 
         # Get a list of predictions based on the current state
         predicted_actions = self.model.predict(state)
-
+        #print ('predicted actions:',predicted_actions)
         # Return the maximum-reward action
         return np.argmax(predicted_actions[0])
 
@@ -139,6 +158,7 @@ class DQN:
     def train(self, num_episodes=2000, can_stop=True):
 
         frames = []
+        rolling_rewards=[]
 
         for episode in range(num_episodes):
 
@@ -153,9 +173,8 @@ class DQN:
             done = False
             state = np.reshape(state, [1, self.num_observation_space])
             while not done:
-                frame = env.render(mode='rgb_array')
-
-                if episode % 10 == 0:
+                if episode%100==0:
+                    frame = env.render(mode='rgb_array')
                     frames.append(frame)                    
 
 
@@ -182,7 +201,7 @@ class DQN:
             self.rewards_list.append(reward_for_episode)
 
             # Create a video from every 10th episode
-            if episode % 10 == 0:
+            if episode % 100 == 0:
                 fname = "/tmp/videos/episode"+str(episode)+".mp4"
                 skvideo.io.vwrite(fname, np.array(frames))
                 del frames
@@ -196,10 +215,12 @@ class DQN:
             last_rewards_mean = np.mean(self.rewards_list[-100:])
 
             # Once the mean average of rewards is over 200, we can stop training
-            if last_rewards_mean > 200 and can_stop:
+            if last_rewards_mean > 250 and can_stop:
                 print("DQN Training Complete...")
                 break
-            print(episode, "\t: Episode || Reward: ",reward_for_episode, "\t|| Average Reward: ",last_rewards_mean, "\t epsilon: ", self.epsilon )
+            #print(episode, "\t: Training Episode || Reward: ",reward_for_episode, "\t|| Average Reward: ",last_rewards_mean, "\t epsilon: ", self.epsilon )
+            if episode %10==0:
+                print(episode, "\t: Training Episode || Reward: ",reward_for_episode, "\t|| Last 10 Reward: ",np.mean(self.rewards_list[-10:]), "\t epsilon: ", self.epsilon )
 
     def update_counter(self):
         self.counter += 1
@@ -227,6 +248,8 @@ if __name__=="__main__":
  
     # initialize the Deep-Q Network model
     model = DQN(env)
+    print ('num_action_space:',model.num_action_space)
+    print ('num_observation_space:',model.num_observation_space)
 
     # Train the model
     model.train(training_episodes, True)
@@ -251,6 +274,7 @@ if __name__=="__main__":
             selected_action = np.argmax(model.predict(current_state)[0])
             new_state, reward, done, info = env.step(selected_action)
             new_state = np.reshape(new_state, [1, num_observation_space])
+            #print ('new state:',new_state)
             current_state = new_state
             reward_for_episode += reward
         rewards_list.append(reward_for_episode)

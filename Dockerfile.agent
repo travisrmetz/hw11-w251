@@ -8,5 +8,5 @@ COPY agent_lunar_lander.py .
 
 RUN mkdir /tmp/videos
 
-CMD ["python3", "agent_lunar_lander.py"]
+#CMD ["python3", "agent_lunar_lander.py"]
 
