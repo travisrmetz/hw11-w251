@@ -15,6 +15,7 @@ from keras.activations import relu, linear
 from keras.losses import mean_squared_error
 from keras.optimizers import Adam
 import random
+import time
 
 
 class DQN:
@@ -27,8 +28,8 @@ class DQN:
 
         #######################
         # Change these parameters to improve performance
-        self.density_first_layer = 64
-        self.density_second_layer = 32
+        self.density_first_layer = 128
+        self.density_second_layer = 64
         self.num_epochs = 1
         self.batch_size = 256
         self.epsilon_min = 0.01
@@ -36,7 +37,7 @@ class DQN:
         # epsilon will randomly choose the next action as either
         # a random action, or the highest scoring predicted action
         self.epsilon = 1.0
-        self.epsilon_decay = 0.995
+        self.epsilon_decay = 0.99
         self.gamma = 0.99
 
         # Learning rate
@@ -214,7 +215,7 @@ class DQN:
             # Check for breaking condition
             last_rewards_mean = np.mean(self.rewards_list[-100:])
 
-            # Once the mean average of rewards is over 200, we can stop training
+            # Once the mean average of rewards is over [x], we can stop training
             if last_rewards_mean > 250 and can_stop:
                 print("DQN Training Complete...")
                 break
@@ -232,9 +233,12 @@ class DQN:
 
 
 if __name__=="__main__":
+    
+    start_time=time.time()
     rewards_list = []
 
     # Run 100 episodes to generate the initial training data
+    # TRM - I don't this comment is right - I think is # of times it runs AFTER it trains the model
     num_test_episode = 100
 
     env = gym.make("LunarLander-v2")
@@ -244,7 +248,7 @@ if __name__=="__main__":
     np.random.seed(21)
 
     # max number of training episodes
-    training_episodes = 2000
+    training_episodes = 1000
  
     # initialize the Deep-Q Network model
     model = DQN(env)
@@ -253,6 +257,10 @@ if __name__=="__main__":
 
     # Train the model
     model.train(training_episodes, True)
+    
+    end_time=time.time()
+    total_minutes=(end_time-start_time)/60
+    print ('Training took',total_minutes,'minutes')
 
     print("Starting Testing of the trained model...")
 
