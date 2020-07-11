@@ -28,7 +28,7 @@ class DQN:
 
         #######################
         # Change these parameters to improve performance
-        self.density_first_layer = 128
+        self.density_first_layer = 64
         self.density_second_layer = 64
         self.num_epochs = 1
         self.batch_size = 256
@@ -37,7 +37,7 @@ class DQN:
         # epsilon will randomly choose the next action as either
         # a random action, or the highest scoring predicted action
         self.epsilon = 1.0
-        self.epsilon_decay = 0.99
+        self.epsilon_decay = 0.995
         self.gamma = 0.99
 
         # Learning rate
@@ -268,6 +268,7 @@ if __name__=="__main__":
     frames = []
 
     # Run some test episodes to see how well our model performs
+    start_time=time.time()
     for test_episode in range(num_test_episode):
         current_state = env.reset()
         num_observation_space = env.observation_space.shape[0]
@@ -295,5 +296,9 @@ if __name__=="__main__":
 
     rewards_mean = np.mean(rewards_list[-100:])
     print("Average Reward: ", rewards_mean )
+
+    end_time=time.time()
+    total_minutes=(end_time-start_time)/60
+    print ('Testing took',total_minutes,'minutes')
 
     
