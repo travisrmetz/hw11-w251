@@ -9,7 +9,6 @@ With dense layers of 64 and 32, batch size of 256, unchanged epsilon decay of .9
 - />200 reward ~380 (rolling 10)
 - 100 test average 248.76
 
-
 32, 16, 256
 - positive reward ~ 240 (rolling 10)
 - />200 reward ~460 (rolling 10)
@@ -61,12 +60,47 @@ With dense layers of 64 and 32, batch size of 256, unchanged epsilon decay of .9
 - 68 minutes to test
 
 64, 64, 256, 0.995 decay
-- positive reward ~  (rolling 10)
-- />200 reward ~  (rolling 10)
-- 100 test average - 
--  minutes to train (stopped at )
--  minutes to test
+- positive reward ~ 280 (rolling 10)
+- />200 reward ~ 440 (rolling 10)
+- 100 test average - 244.97 
+- 86 minutes to train (stopped at 690)
+- 64 minutes to test 
 
+128, 32, 256, 0.995 decay
+- positive reward ~ 280 (rolling 10)
+- />200 reward ~ 500 (rolling 10)
+- 100 test average -  
+-  minutes to train - 103 (stopped at 1000)
+-  minutes to test - 
+
+### Videos
+(These run in Chrome but do not run on my local MP4 player.)
+#### Training
+https://w251-hw11-metz.s3.us-east-2.amazonaws.com/episode0.mp4
+https://w251-hw11-metz.s3.us-east-2.amazonaws.com/episode100.mp4
+https://w251-hw11-metz.s3.us-east-2.amazonaws.com/episode400.mp4
+https://w251-hw11-metz.s3.us-east-2.amazonaws.com/episode600.mp4
+#### Testing
+https://w251-hw11-metz.s3.us-east-2.amazonaws.com/testing_run0.mp4
+https://w251-hw11-metz.s3.us-east-2.amazonaws.com/testing_run20.mp4
+
+
+### Homework questions
+
+#### 1) What parameters did you change? 
+Changed depth of first and second dense layers.  Also varied epsilon decay rate and tried different learning rates.
+#### 2) What values did you try?
+See above.
+#### 3) Did you try any other changes that made things better or worse?
+See above.
+#### 4) Did they improve or degrade the model? Did you have a test run with 100% of the scores above 200?
+No.
+#### 5) Based on what you observed, what conclusions can you draw about the different parameters and their values?
+There is very modest differences in model quality, even with models of meaningfully different sizes.  The quality of the model is highly dependent on the epsilon decay level - the model needs time to explore random spaces.
+#### 6) What is the purpose of the epsilon value?
+It is efffectively the percentage of times the model tries a random action rather than its view of the most rewarding action.  Early in a model's development this figure needs to be high so that the model explores more space.  It's decay allows the transition from explore to exploit as the model gets more sure of the solution.
+
+#### 7) Describe "Q-Learning".
 
 
 ### Other notes
